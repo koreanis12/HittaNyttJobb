@@ -10,10 +10,10 @@
     <header>
         <div class="logo">💼 HittaNyttJobb</div>
         <nav>
-            <a class="nav-link aktiv" onclick="showPage('hem')">Hem</a>
-            <a class="nav-link" onclick="showPage('sok')">Sök</a>
-            <a class="nav-link" onclick="showPage('mina')">Mina Jobb</a>
-            <a class="nav-link" onclick="showPage('profil')">Profil</a>
+            <a class="nav-link aktiv" onclick="showPage(event, 'hem')">Hem</a>
+            <a class="nav-link" onclick="showPage(event, 'sok')">Sök</a>
+            <a class="nav-link" onclick="showPage(event, 'mina')">Mina Jobb</a>
+            <a class="nav-link" onclick="showPage(event, 'profil')">Profil</a>
         </nav>
     </header>
 
@@ -49,11 +49,9 @@
         <h2>👤 Min Profil</h2>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <!-- VÄNSTER: Bygg din profil -->
             <div>
                 <h3>Bygg din profil</h3>
                 
-                <!-- Grunduppgifter -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Dina uppgifter (privat)</h4>
                     <label>Namn:</label>
@@ -65,14 +63,11 @@
                     <button onclick="sparaProfilNy()" style="width: 100%; margin-top: 1rem; padding: 0.8rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Spara uppgifter</button>
                 </div>
                 
-                <!-- Om mig beskrivning -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Om mig (max 500 ord)</h4>
-                    <textarea id="omBeskrivning" placeholder="Beskriv dig själv, dina ambitioner, vad du söker..." style="width: 100%; height: 120px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 5px; font-family: Arial; font-size: 14px;"></textarea>
-                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;" id="ordCount">0 / 500 ord</p>
+                    <textarea id="omBeskrivning" placeholder="Beskriv dig själv..." style="width: 100%; height: 120px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 5px; font-family: Arial; font-size: 14px;"></textarea>
                 </div>
                 
-                <!-- Skola och utbildning -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Skola & Utbildning</h4>
                     <label>Din skola:</label>
@@ -87,46 +82,34 @@
                     </select>
                 </div>
                 
-                <!-- Meriter -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Meriter</h4>
-                    <p style="font-size: 0.9rem; color: #666;">Ex: Pizza 2 år, Lager 1 år, Kassörsarbete</p>
                     <input type="text" id="inputMerit" placeholder="Ex: Pizza 2 år">
                     <button onclick="laggaTillMerit()" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Lägg till merit</button>
                 </div>
                 
-                <!-- Egenskaper -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Personliga Egenskaper</h4>
-                    <p style="font-size: 0.9rem; color: #666;">Ex: Snabb, pålitlig, ansvarstagande, teamwork</p>
                     <input type="text" id="inputEgenskap" placeholder="Ex: Snabb och pålitlig">
                     <button onclick="laggaTillEgenskap()" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Lägg till egenskap</button>
                 </div>
                 
-                <!-- Certifikat -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>Certifikat & Licenser</h4>
-                    <p style="font-size: 0.9rem; color: #666;">Ex: Arbetsmiljöcertifikat, Körkort B, IMDG</p>
                     <input type="text" id="inputCertifikat" placeholder="Ex: Arbetsmiljöcertifikat">
                     <button onclick="laggaTillCertifikat()" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Lägg till certifikat</button>
                 </div>
                 
-                <!-- Referenser -->
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                     <h4>📮 Referenser</h4>
-                    <p style="font-size: 0.9rem; color: #666;">Lägg till personer som kan referera dig</p>
-                    
                     <label>Referens namn:</label>
                     <input type="text" id="inputReferensNamn" placeholder="Ex: Johan Andersson">
-                    
                     <label>Referens email:</label>
                     <input type="email" id="inputReferensEmail" placeholder="Ex: johan@example.com">
-                    
                     <button onclick="laggaTillReferens()" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Lägg till referens</button>
                 </div>
             </div>
             
-            <!-- HÖGER: Din anonyma profil (vad företag ser) -->
             <div>
                 <h3>Så ser företag dig 👀</h3>
                 <div id="anonymProfil"></div>

@@ -1,20 +1,29 @@
-let allJobb = [
-    {id: 1, titel: "Pizzabagare", typ: "Pizza", omrade: "Stockholm", beskrivning: "Vi söker pizzabagare", lon: "150 kr/tim", start: "2026-06-15", slut: "2026-08-31", arbetsgivare: "Pizzeria Roma", telefon: "070-123 4567"},
-    {id: 2, titel: "Lagerarbetare", typ: "Lager", omrade: "Södermalm", beskrivning: "Lagerarbete", lon: "140 kr/tim", start: "2026-06-01", slut: "2026-08-31", arbetsgivare: "Logistik Sverige AB", telefon: "070-234 5678"},
-    {id: 3, titel: "Städare", typ: "Städ", omrade: "Norrmalm", beskrivning: "Städning", lon: "130 kr/tim", start: "2026-06-15", slut: "2026-08-30", arbetsgivare: "ReNy Städservice", telefon: "070-345 6789"},
-    {id: 4, titel: "Kassörsarbetare", typ: "Kassörsarbete", omrade: "Östermalm", beskrivning: "Kassaarbete", lon: "135 kr/tim", start: "2026-07-01", slut: "2026-08-31", arbetsgivare: "ICA Supermarket", telefon: "070-456 7890"}
-];
-
-let sparadeJobb = JSON.parse(localStorage.getItem('sparadeJobb')) || [];
-let minProfil = {id: Math.floor(Math.random() * 9000) + 1000, namn: '', email: '', telefon: '', omBeskrivning: '', meriter: [], skola: '', utbildningsNiva: 'Grundskola', egenskaper: [], certifikat: [], betyg: 5};
+let allJobb = [];
+let sparadeJobb = [];
+let minProfil = null;
 let minProfilReferenser = [];
 
 window.addEventListener('load', function() {
+    initiera();
+});
+
+function initiera() {
+    allJobb = [
+        {id: 1, titel: "Pizzabagare", typ: "Pizza", omrade: "Stockholm", beskrivning: "Vi söker pizzabagare", lon: "150 kr/tim", start: "2026-06-15", slut: "2026-08-31", arbetsgivare: "Pizzeria Roma", telefon: "070-123 4567"},
+        {id: 2, titel: "Lagerarbetare", typ: "Lager", omrade: "Södermalm", beskrivning: "Lagerarbete", lon: "140 kr/tim", start: "2026-06-01", slut: "2026-08-31", arbetsgivare: "Logistik Sverige AB", telefon: "070-234 5678"},
+        {id: 3, titel: "Städare", typ: "Städ", omrade: "Norrmalm", beskrivning: "Städning", lon: "130 kr/tim", start: "2026-06-15", slut: "2026-08-30", arbetsgivare: "ReNy Städservice", telefon: "070-345 6789"},
+        {id: 4, titel: "Kassörsarbetare", typ: "Kassörsarbete", omrade: "Östermalm", beskrivning: "Kassaarbete", lon: "135 kr/tim", start: "2026-07-01", slut: "2026-08-31", arbetsgivare: "ICA Supermarket", telefon: "070-456 7890"}
+    ];
+    
+    minProfil = {id: Math.floor(Math.random() * 9000) + 1000, namn: '', email: '', telefon: '', omBeskrivning: '', meriter: [], skola: '', utbildningsNiva: 'Grundskola', egenskaper: [], certifikat: [], betyg: 5};
+    minProfilReferenser = [];
+    
+    sparadeJobb = JSON.parse(localStorage.getItem('sparadeJobb')) || [];
     lastaProfilFranStorage();
     lastaReferenser();
     visaAllaJobb();
     visaMinAnonymaProfil();
-});
+}
 
 function showPage(event, pageName) {
     event.preventDefault();
@@ -26,12 +35,13 @@ function showPage(event, pageName) {
 
 function visaAllaJobb() {
     const lista = document.getElementById('jobbLista');
+    if (!lista) return;
     lista.innerHTML = '';
     allJobb.forEach(jobb => {
         const sparad = sparadeJobb.some(j => j.id === jobb.id);
         const kort = document.createElement('div');
         kort.className = 'jobb-kort';
-        kort.innerHTML = `<h3>${jobb.titel}</h3><div class="omrade">📍 ${jobb.omrade}</div><div class="lon">${jobb.lon}</div><p>${jobb.beskrivning}</p><small>Från: ${jobb.start} till ${jobb.slut}</small><div class="jobb-buttons" style="margin-top: 1rem;"><button class="btn btn-info" onclick="visaJobbDetalj(${jobb.id})">Läs mer</button><button class="btn btn-spara ${sparad ? 'sparad' : ''}" onclick="sparaJobb(${jobb.id})" id="btn-${jobb.id}">${sparad ? '❤️ Sparad' : '🤍 Spara'}</button></div>`;
+        kort.innerHTML = `<h3>${jobb.titel}</h3><div class="omrade">📍 ${jobb.omrade}</div><div class="lon">${jobb.lon}</div><p>${jobb.beskrivning}</p><small>Från: ${jobb.start} till ${jobb.slut}</small><div class="jobb-buttons" style="margin-top: 1rem;"><button class="btn btn-info" onclick="visaJobbDetalj(${jobb.id})">Läs mer</button><button class="btn btn-spara ${sparad ? 'sparad' : ''}" onclick="sparaJobb(${jobb.id})">${sparad ? '❤️ Sparad' : '🤍 Spara'}</button></div>`;
         lista.appendChild(kort);
     });
 }
@@ -178,7 +188,7 @@ function raderaReferens(i) {
 function lastaProfilFranStorage() {
     const sparad = localStorage.getItem('minProfil');
     if (sparad) minProfil = JSON.parse(sparad);
-    if (minProfil.namn) {
+    if (minProfil && minProfil.namn) {
         document.getElementById('namn').value = minProfil.namn;
         document.getElementById('email').value = minProfil.email;
         document.getElementById('telefon').value = minProfil.telefon;
@@ -194,27 +204,15 @@ function lastaReferenser() {
 }
 
 function visaMinAnonymaProfil() {
+    if (!minProfil) return;
     const stjarnor = '⭐'.repeat(minProfil.betyg) + '☆'.repeat(5 - minProfil.betyg);
-    const meritHTML = minProfil.meriter.length === 0 ? '<p style="color: #999;">Lägg till meriter →</p>' : minProfil.meriter.map((m, i) => `<li>${m} <button onclick="raderaMerit(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
-    const egenskapHTML = minProfil.egenskaper.length === 0 ? '<p style="color: #999;">Lägg till egenskaper →</p>' : minProfil.egenskaper.map((e, i) => `<li>${e} <button onclick="raderaEgenskap(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
-    const certHTML = minProfil.certifikat.length === 0 ? '<p style="color: #999;">Lägg till certifikat →</p>' : minProfil.certifikat.map((c, i) => `<li>${c} <button onclick="raderaCertifikat(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
-    const refHTML = minProfilReferenser.length === 0 ? '<p style="color: #999;">Lägg till referenser →</p>' : minProfilReferenser.map((r, i) => `<li><strong>${r.namn}</strong> (${r.betyg})</li>`).join('');
+    const meritHTML = !minProfil.meriter || minProfil.meriter.length === 0 ? '<p style="color: #999;">Lägg till meriter →</p>' : minProfil.meriter.map((m, i) => `<li>${m} <button onclick="raderaMerit(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
+    const egenskapHTML = !minProfil.egenskaper || minProfil.egenskaper.length === 0 ? '<p style="color: #999;">Lägg till egenskaper →</p>' : minProfil.egenskaper.map((e, i) => `<li>${e} <button onclick="raderaEgenskap(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
+    const certHTML = !minProfil.certifikat || minProfil.certifikat.length === 0 ? '<p style="color: #999;">Lägg till certifikat →</p>' : minProfil.certifikat.map((c, i) => `<li>${c} <button onclick="raderaCertifikat(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`).join('');
+    const refHTML = !minProfilReferenser || minProfilReferenser.length === 0 ? '<p style="color: #999;">Lägg till referenser →</p>' : minProfilReferenser.map((r, i) => `<li><strong>${r.namn}</strong> (${r.betyg})</li>`).join('');
     const betyg = [1,2,3,4,5].map(b => `<button onclick="andraBetyg(${b})" style="padding: 0.5rem 1rem; margin: 0.25rem; background: ${minProfil.betyg === b ? '#667eea' : '#f0f0f0'}; border: none; border-radius: 5px; cursor: pointer;">${'⭐'.repeat(b)}</button>`).join('');
     
-    const html = `
-        <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 10px;">
-            <h3>Kandidat #${minProfil.id}</h3>
-            <p><strong>Betyg:</strong> ${stjarnor}</p>
-            <div style="margin-top: 0.5rem;">${betyg}</div>
-            ${minProfil.omBeskrivning ? `<p style="margin-top: 1rem;"><strong>Om mig:</strong><br>${minProfil.omBeskrivning}</p>` : ''}
-            ${minProfil.skola ? `<p><strong>Skola:</strong> ${minProfil.skola}<br><strong>Nivå:</strong> ${minProfil.utbildningsNiva}</p>` : ''}
-            <p style="margin-top: 1rem;"><strong>Meriter:</strong></p><ul style="list-style: none; padding: 0;">${meritHTML}</ul>
-            <p style="margin-top: 1rem;"><strong>Egenskaper:</strong></p><ul style="list-style: none; padding: 0;">${egenskapHTML}</ul>
-            <p style="margin-top: 1rem;"><strong>Certifikat:</strong></p><ul style="list-style: none; padding: 0;">${certHTML}</ul>
-            <p style="margin-top: 1rem;"><strong>Referenser:</strong></p><ul style="list-style: none; padding: 0;">${refHTML}</ul>
-            <p style="color: #999; font-size: 0.9rem; margin-top: 1.5rem;">💡 Endast detta syns för företag!</p>
-        </div>
-    `;
+    const html = `<div style="background: #f9f9f9; padding: 1.5rem; border-radius: 10px;"><h3>Kandidat #${minProfil.id}</h3><p><strong>Betyg:</strong> ${stjarnor}</p><div style="margin-top: 0.5rem;">${betyg}</div>${minProfil.omBeskrivning ? `<p style="margin-top: 1rem;"><strong>Om mig:</strong><br>${minProfil.omBeskrivning}</p>` : ''}${minProfil.skola ? `<p><strong>Skola:</strong> ${minProfil.skola}<br><strong>Nivå:</strong> ${minProfil.utbildningsNiva}</p>` : ''}<p style="margin-top: 1rem;"><strong>Meriter:</strong></p><ul style="list-style: none; padding: 0;">${meritHTML}</ul><p style="margin-top: 1rem;"><strong>Egenskaper:</strong></p><ul style="list-style: none; padding: 0;">${egenskapHTML}</ul><p style="margin-top: 1rem;"><strong>Certifikat:</strong></p><ul style="list-style: none; padding: 0;">${certHTML}</ul><p style="margin-top: 1rem;"><strong>Referenser:</strong></p><ul style="list-style: none; padding: 0;">${refHTML}</ul><p style="color: #999; font-size: 0.9rem; margin-top: 1.5rem;">💡 Endast detta syns för företag!</p></div>`;
     
     const div = document.getElementById('anonymProfil');
     if (div) div.innerHTML = html;

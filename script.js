@@ -305,11 +305,19 @@ let minProfil = {
     namn: '',
     email: '',
     telefon: '',
-    meriter: ['Pizza 1 år', 'Lager 6 mån'], // Exempel
-    färdigheter: ['Snabb', 'Pålitlig', 'Svenska, engelska'],
+    meriter: [],
+    färdigheter: [],
     betyg: 5,
     verifierad: false
 };
+
+// Ladda profil från localStorage när sidan startar
+function lastaProfilFranStorage() {
+    const sparad = localStorage.getItem('minProfil');
+    if (sparad) {
+        minProfil = JSON.parse(sparad);
+    }
+}
 
 function sparaProfilNy() {
     minProfil.namn = document.getElementById('namn').value;
@@ -318,22 +326,121 @@ function sparaProfilNy() {
     
     localStorage.setItem('minProfil', JSON.stringify(minProfil));
     alert('✓ Profil sparad!\n\nDin anonyma kandidat-ID: #' + minProfil.id);
+    visaMinAnonymaProfil();
+}
+
+function laggaTillMerit() {
+    const merit = document.getElementById('inputMerit').value.trim();
+    
+    if (!merit) {
+        alert('Skriv en merit först!');
+        return;
+    }
+    
+    if (minProfil.meriter.includes(merit)) {
+        alert('Du har redan denna merit!');
+        return;
+    }
+    
+    minProfil.meriter.push(merit);
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    
+    document.getElementById('inputMerit').value = '';
+    visaMinAnonymaProfil();
+}
+
+function raderaMerit(index) {
+    minProfil.meriter.splice(index, 1);
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    visaMinAnonymaProfil();
+}
+
+function laggaTillFardigheit() {
+    const fardigheit = document.getElementById('inputFardigheit').value.trim();
+    
+    if (!fardigheit) {
+        alert('Skriv en färdighet först!');
+        return;
+    }
+    
+    if (minProfil.färdigheter.includes(fardigheit)) {
+        alert('Du har redan denna färdighet!');
+        return;
+    }
+    
+    minProfil.färdigheter.push(fardigheit);
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    
+    document.getElementById('inputFardigheit').value = '';
+    visaMinAnonymaProfil();
+}
+
+function raderaFardigheit(index) {
+    minProfil.färdigheter.splice(index, 1);
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    visaMinAnonymaProfil();
+}
+
+function andraBetyg(nyBetyg) {
+    minProfil.betyg = nyBetyg;
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    visaMinAnonymaProfil();
 }
 
 function visaMinAnonymaProfil() {
+    const stjarnor = '⭐'.repeat(minProfil.betyg) + '☆'.repeat(5 - minProfil.betyg);
+    
+    let meritHTML = '';
+    if (minProfil.meriter.length === 0) {
+        meritHTML = '<p style="color: #999;">Lägg till dina meriter →</p>';
+    } else {
+        meritHTML = minProfil.meriter.map((m, i) => 
+            `<li>${m} <button onclick="raderaMerit(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`
+        ).join('');
+    }
+    
+    let fardigheterHTML = '';
+    if (minProfil.färdigheter.length === 0) {
+        fardigheterHTML = '<p style="color: #999;">Lägg till dina färdigheter →</p>';
+    } else {
+        fardigheterHTML = minProfil.färdigheter.map((f, i) => 
+            `<li>${f} <button onclick="raderaFardigheit(${i})" style="color: red; border: none; background: none; cursor: pointer;">✕</button></li>`
+        ).join('');
+    }
+    
+    const betygsKnappar = [1, 2, 3, 4, 5].map(b => 
+        `<button onclick="andraBetyg(${b})" style="padding: 0.5rem 1rem; margin: 0.25rem; background: ${minProfil.betyg === b ? '#667eea' : '#f0f0f0'}; color: ${minProfil.betyg === b ? 'white' : 'black'}; border: none; border-radius: 5px; cursor: pointer;">${'⭐'.repeat(b)}</button>`
+    ).join('');
+    
     return `
         <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 10px;">
             <h3>Kandidat #${minProfil.id}</h3>
-            <p>⭐⭐⭐⭐⭐ (${minProfil.betyg}/5)</p>
-            <p><strong>Meriter:</strong></p>
-            <ul>
-                ${minProfil.meriter.map(m => `<li>${m}</li>`).join('')}
-            </ul>
-            <p><strong>Färdigheter:</strong></p>
-            <ul>
-                ${minProfil.färdigheter.map(f => `<li>${f}</li>`).join('')}
-            </ul>
-            <p style="color: #999; font-size: 0.9rem;">💡 Endast meriter visas för företag — inte namn eller personuppgifter</p>
+            
+            <div style="margin: 1rem 0;">
+                <p><strong>Betyg:</strong></p>
+                <p>${stjarnor} (${minProfil.betyg}/5)</p>
+                <div style="margin-top: 0.5rem;">
+                    ${betygsKnappar}
+                </div>
+            </div>
+            
+            <div style="margin: 1rem 0;">
+                <p><strong>Meriter:</strong></p>
+                <ul style="list-style: none; padding: 0;">
+                    ${meritHTML}
+                </ul>
+            </div>
+            
+            <div style="margin: 1rem 0;">
+                <p><strong>Färdigheter:</strong></p>
+                <ul style="list-style: none; padding: 0;">
+                    ${fardigheterHTML}
+                </ul>
+            </div>
+            
+            <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
+                💡 Företag ser bara detta — inte namn eller personuppgifter!
+            </p>
         </div>
     `;
 }

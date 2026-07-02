@@ -292,3 +292,46 @@ function ansok(jobbId) {
     alert(`Tack för din ansökan till ${jobb.titel}!\n\nVi kontaktar dig på ${profil.email}`);
     stangModal();
 }
+// === ANONYM PROFIL SYSTEM ===
+
+function genereraProfilID() {
+    return Math.floor(Math.random() * 9000) + 1000;
+}
+
+let minProfil = {
+    id: genereraProfilID(),
+    namn: '',
+    email: '',
+    telefon: '',
+    meriter: ['Pizza 1 år', 'Lager 6 mån'], // Exempel
+    färdigheter: ['Snabb', 'Pålitlig', 'Svenska, engelska'],
+    betyg: 5,
+    verifierad: false
+};
+
+function sparaProfilNy() {
+    minProfil.namn = document.getElementById('namn').value;
+    minProfil.email = document.getElementById('email').value;
+    minProfil.telefon = document.getElementById('telefon').value;
+    
+    localStorage.setItem('minProfil', JSON.stringify(minProfil));
+    alert('✓ Profil sparad!\n\nDin anonyma kandidat-ID: #' + minProfil.id);
+}
+
+function visaMinAnonymaProfil() {
+    return `
+        <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 10px;">
+            <h3>Kandidat #${minProfil.id}</h3>
+            <p>⭐⭐⭐⭐⭐ (${minProfil.betyg}/5)</p>
+            <p><strong>Meriter:</strong></p>
+            <ul>
+                ${minProfil.meriter.map(m => `<li>${m}</li>`).join('')}
+            </ul>
+            <p><strong>Färdigheter:</strong></p>
+            <ul>
+                ${minProfil.färdigheter.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+            <p style="color: #999; font-size: 0.9rem;">💡 Endast meriter visas för företag — inte namn eller personuppgifter</p>
+        </div>
+    `;
+}

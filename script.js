@@ -62,7 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
     lastaProfilData();
 });
 
-function showPage(pageName) {
+function showPage(pageName) {if (pageName === 'profil') {
+    document.getElementById('anonymProfil').innerHTML = visaMinAnonymaProfil();
+}
     const pages = document.querySelectorAll('.page');
     pages.forEach(page => {
         page.classList.remove('aktiv');

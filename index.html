@@ -1,1 +1,70 @@
-https://github.com/koreanis12/HittaNyttJobb/blob/main/index.html
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HittaNyttJobb</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">💼 HittaNyttJobb</div>
+        <nav>
+            <a class="nav-link aktiv" onclick="showPage('hem')">Hem</a>
+            <a class="nav-link" onclick="showPage('sok')">Sök</a>
+            <a class="nav-link" onclick="showPage('mina')">Mina Jobb</a>
+            <a class="nav-link" onclick="showPage('profil')">Profil</a>
+        </nav>
+    </header>
+
+    <div id="hem" class="page aktiv">
+        <section class="hero">
+            <h1>🎯 Hitta ditt sommarjobb!</h1>
+            <p>Lokala jobb som passar dina tider</p>
+        </section>
+        <section class="filter">
+            <label>🏷️ Jobbtyp:</label>
+            <div class="filter-buttons">
+                <button class="filter-btn" onclick="filterJobb('Pizza')">🍕 Pizza</button>
+                <button class="filter-btn" onclick="filterJobb('Lager')">📦 Lager</button>
+                <button class="filter-btn" onclick="filterJobb('Städ')">🧹 Städ</button>
+                <button class="filter-btn" onclick="filterJobb('Kassörsarbete')">💳 Kassörsarbete</button>
+            </div>
+        </section>
+        <section class="jobb-lista" id="jobbLista"></section>
+    </div>
+
+    <div id="sok" class="page">
+        <h2>🔍 Sök Jobb</h2>
+        <input type="text" id="sokRuta" placeholder="Sök jobb..." onkeyup="sokJobb()">
+        <section class="jobb-lista" id="sokResultat"></section>
+    </div>
+
+    <div id="mina" class="page">
+        <h2>❤️ Mina Sparade Jobb</h2>
+        <section class="jobb-lista" id="minaJobb"></section>
+    </div>
+
+    <div id="profil" class="page">
+        <h2>👤 Min Profil</h2>
+        <div class="profil-form">
+            <label>Namn:</label>
+            <input type="text" id="namn" placeholder="Ditt namn">
+            <label>Email:</label>
+            <input type="email" id="email" placeholder="Din email">
+            <label>Telefon:</label>
+            <input type="tel" id="telefon" placeholder="Din telefon">
+            <button onclick="sparaProfil()">Spara Profil</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="stangModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

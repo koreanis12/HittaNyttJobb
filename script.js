@@ -3,8 +3,8 @@ let allJobb = [];
 // Hämta jobb från Arbetsförmedlingen
 async function hamtaJobbFranAF() {
     try {
-        const response = await fetch('https://jobsearch.api.jobtechdev.se/search?limit=50');
-        const data = await response.json();
+       const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://jobsearch.api.jobtechdev.se/search?limit=50'));
+const data = JSON.parse(response.json().contents);
         
         // Konvertera AF-data till vårt format
         allJobb = data.hits.map(job => ({
